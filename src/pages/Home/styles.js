@@ -2,7 +2,6 @@ import styled from 'styled-components'
 
 export const Container = styled.div`
   min-height: 100vh;
-  overflow-x: hidden;
 
   display: grid;
   grid-template-rows: 10.5rem auto 9rem;
@@ -20,6 +19,7 @@ export const Container = styled.div`
 
   > main {
     grid-area: main;
+    overflow-x: auto;
 
     display: grid;
     grid-template-rows: 10rem auto;
