@@ -116,7 +116,8 @@ export const Search = styled.div`
   }
 
   > .sold-checkbox,
-  > .bought-checkbox {
+  > .bought-checkbox,
+  > .current-month-checkbox {
     input {
       margin-right: 1rem;
     }

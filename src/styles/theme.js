@@ -6,6 +6,7 @@ export default {
 
     WHITE_100: "#FFFFFF",
     WHITE_300: "#F4EDE8",
+    
     ORANGE: "#FF9000",
     ORANGE_500: "#ffc889",
 

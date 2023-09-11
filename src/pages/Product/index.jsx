@@ -67,11 +67,8 @@ export function Product() {
   function testVariables() {
     if (title === '' || 
     supplier === '' || 
-    color === '' || 
-    model === '' || 
-    serialNumber === '' || 
     valueBought === '' || 
-    boughtAt === '') {
+    formattedBoughtAt.current === '') {
       return false
     } else {
       return true
@@ -80,13 +77,6 @@ export function Product() {
 
   async function handleDeleteProduct() {
     setLoading(true)
-
-    const isOk = testVariables()
-
-    if (!isOk) {
-      setLoading(false)
-      return setAlertMsg('Os campos marcados com asterisco (*) são obrigatórios.')
-    }
 
     try {
       await api.delete(`/products/${params.id}`)
@@ -104,6 +94,39 @@ export function Product() {
     }
   }
 
+  function checkDates(startDate, endDate) {
+    if (startDate) {
+      if (startDate.slice(-2) === '00' || startDate.slice(-2) > '31' ||
+          startDate.slice(5, 7) === '00' || startDate.slice(5, 7) > '12') {
+        setLoading(false)
+        setAlertMsg('Insira uma data válida.')
+        return false
+      }
+    } else {
+      setLoading(false)
+      setAlertMsg('Insira uma data de compra.')
+      return false
+    }
+
+    if (endDate) {
+      if (endDate.slice(-2) === '00' || endDate.slice(-2) > '31' ||
+          endDate.slice(5, 7) === '00' || endDate.slice(5, 7) > '12') {
+        setLoading(false)
+        console.log(endDate)
+        setAlertMsg('Insira uma data válida.')
+        return false
+      }
+  
+      if(startDate > endDate) {
+        setLoading(false)
+        setAlertMsg('A data no campo "De:" deve ser menor ou igual que a data no campo "Até:".')
+        return false
+      }
+    }
+
+    return true
+  }
+
   async function handleUpdateProduct() {
     setLoading(true)
 
@@ -112,6 +135,12 @@ export function Product() {
     if (!isOk) {
       setLoading(false)
       return setAlertMsg('Os campos marcados com asterisco (*) são obrigatórios.')
+    }
+
+    const dataOk = checkDates(formattedBoughtAt.current, formattedSoldAt.current)
+
+    if (!dataOk) {
+      return
     }
 
     try {
@@ -188,14 +217,18 @@ export function Product() {
           bought_at,
           sold_at
         } = response.data
-  
-        let [boughtAtFormated,] = bought_at.split(' ')
-        let [soldAtFormated,] = sold_at.split(' ')
 
-        const [yearBought, mounthBought, dayBought] = boughtAtFormated.split('-')
-        const [yearSold, mounthSold, daySold] = soldAtFormated.split('-')
 
-        boughtAtFormated = 
+        const [yearBought, mounthBought, dayBought] = bought_at.split(' ')[0].split('-')
+
+        let soldAtFormated = ''
+        
+        if (sold_at) {
+          const [yearSold, mounthSold, daySold] = sold_at.split(' ')[0].split('-')
+          soldAtFormated = `${daySold}/${mounthSold}/${yearSold}`
+        }
+
+        const boughtAtFormated = `${dayBought}/${mounthBought}/${yearBought}`
   
         setTitle(title)
         setDetails(details)
@@ -206,8 +239,8 @@ export function Product() {
         setSerialNumber(serial_number)
         setValueSold(value_sold)
         setValueBought(value_bought)
-        setBoughtAt(`${dayBought}/${mounthBought}/${yearBought}`)
-        setSoldAt(`${daySold}/${mounthSold}/${yearSold}`)
+        handleSetBoughtAt(boughtAtFormated)
+        handleSetSoldAt(soldAtFormated)
       } catch (error) {
         if(error.response) {
           setAlertMsg(error.response.data.message)
@@ -247,7 +280,7 @@ export function Product() {
           />
 
           <InputText 
-            title="Modelo *"
+            title="Modelo"
             id="model"
             type="text"
             placeholder="Modelo do produto"
@@ -258,7 +291,7 @@ export function Product() {
           />
 
           <InputText 
-            title="Cor *"
+            title="Cor"
             id="color"
             type="text"
             placeholder="Cor do produto"
@@ -269,7 +302,7 @@ export function Product() {
           />
 
           <InputText 
-            title="Número de série *"
+            title="Número de série"
             id="serial-number"
             type="text"
             placeholder="Número de série do produto"

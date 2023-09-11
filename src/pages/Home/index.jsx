@@ -19,6 +19,7 @@ import { InputText } from '../../components/InputText'
 import { ProductItem } from '../../components/ProductItem'
 import { Button } from '../../components/Button'
 import { ModalAlert } from '../../components/ModalAlert'
+import { Order } from '../../components/Order'
 
 import { NumericFormat, PatternFormat } from "react-number-format";
 
@@ -34,7 +35,10 @@ export function Home() {
   const [endDate, setEndDate] = useState('')
   const [isBought, setIsBought] = useState(false)
   const [isSold, setIsSold] = useState(false)
-
+  const [columnName, setColumnName] = useState('updated_at')
+  const [columnNameRaw, setColumnNameRaw] = useState('title')
+  const [order, setOrder] = useState('desc')
+  
   const [callFetch, setCallFetch] = useState(false)
   const [loading, setLoading] = useState(false)
   const [alertMsg, setAlertMsg] = useState('')
@@ -42,6 +46,8 @@ export function Home() {
   const [moreProducts, setMoreProducts] = useState(false)
   const [page, setPage] = useState(1)
   const [filerByDate, setFilterByDate] = useState(false)
+  const [isCurrentMonth, setIsCurrentMonth] = useState(false)
+  const [allProductsMsg, setAllProductsMsg] = useState(true)
 
   const [amountBought, setAmountBought] = useState('')
   const [amountSold, setAmountSold] = useState('')
@@ -50,11 +56,11 @@ export function Home() {
 
   const [products, setProducts] = useState([])
 
-  const limit = 9
+  const limit = 12
 
   const formattedStartDate = useRef('')
   const formattedEndDate = useRef('')
-  const isCheck = useRef(false)
+
 
   const handleChangeMinValue = (values) => {
     const { floatValue } = values;
@@ -66,10 +72,23 @@ export function Home() {
     setMaxValue(floatValue);
   };
 
+  function handleDateMsg() {
+    if (!isCurrentMonth && !filerByDate) {
+      setAllProductsMsg(true)
+    } else {
+      setAllProductsMsg(false)
+    }
+  }
+
+  function handleIsCurrentMonth() {
+    setIsCurrentMonth(!isCurrentMonth)
+
+    handleFetchProducts()
+  }
+
   function handleIsBought() {
     setIsSold(false)
     setIsBought(!isBought)
-    isCheck.current = true
 
     handleFetchProducts()
   }
@@ -77,7 +96,14 @@ export function Home() {
   function handleIsSold() {
     setIsBought(false)
     setIsSold(!isSold)
-    isCheck.current = true
+
+    handleFetchProducts()
+  }
+
+  function handleSetOrder(column, order, columnRaw) {
+    setColumnName(column)
+    setOrder(order)
+    setColumnNameRaw(columnRaw)
 
     handleFetchProducts()
   }
@@ -86,41 +112,49 @@ export function Home() {
     setPage(1)
     setCallFetch(!callFetch)
   }
+
+  function checkDates(startDate, endDate) {
+    if (startDate && endDate) {
+      if (startDate.slice(-2) === '00' || startDate.slice(-2) > '31' ||
+        endDate.slice(-2) === '00' || endDate.slice(-2) > '31' ||
+        startDate.slice(5, 7) === '00' || startDate.slice(5, 7) > '12' ||
+        endDate.slice(5, 7) === '00' || endDate.slice(5, 7) > '12') {
+        setLoading(false)
+        setIsBought(false)
+        setIsSold(false)
+
+        setAlertMsg('Insira uma data válida.')
+        return false
+      }
+
+      if(startDate > endDate) {
+        setLoading(false)
+        setIsBought(false)
+        setIsSold(false)
+
+        setAlertMsg('A data no campo "De:" deve ser menor ou igual que a data no campo "Até:".')
+        return false
+      }
+    } else if (!startDate && endDate || startDate && !endDate) {
+      setLoading(false)
+      setAlertMsg('Insira ambas as datas.')
+      return false
+    }
+
+    return true
+  }
   
   async function fetchProducts() {
     setLoading(true)
 
-    if (formattedStartDate.current.slice(0, 2) === '00' || formattedStartDate.current.slice(0, 2) > '31' ||
-        formattedEndDate.current.slice(0, 2) === '00' || formattedEndDate.current.slice(0, 2) > '31' ||
-        formattedStartDate.current.slice(5, 7) === '00' || formattedStartDate.current.slice(5, 7) > '12' ||
-        formattedEndDate.current.slice(5, 7) === '00' || formattedEndDate.current.slice(5, 7) > '12') {
-      setLoading(false)
-
-      if (isCheck.current) {
-        setIsBought(false)
-        setIsSold(false)
-        isCheck.current = false
-      }
-
-      return setAlertMsg('Insira uma data válida.')
-    }
-
-    if(formattedStartDate.current > formattedEndDate.current) {
-      setLoading(false)
-
-      if (isCheck.current) {
-        setIsBought(false)
-        setIsSold(false)
-        isCheck.current = false
-      }
-
-      return setAlertMsg('A data no campo "De:" deve ser menor ou igual que a data no campo "Até:".')
+    if (!checkDates()) {
+      return
     }
 
     try {
       const responseProducts = 
         await api.get(
-          `/products?limit=${limit}&page=${page}&title=${title}&details=${title}&supplier=${supplier}&startDate=${formattedStartDate.current}&endDate=${formattedEndDate.current}&isBought=${isBought}&isSold=${isSold}&max_value=${maxValue}&min_value=${minValue}&serial_number=${seriaNumber}&client=${client}`
+          `/products?limit=${limit}&page=${page}&title=${title}&details=${title}&supplier=${supplier}&startDate=${formattedStartDate.current}&endDate=${formattedEndDate.current}&isBought=${isBought}&isSold=${isSold}&max_value=${maxValue}&min_value=${minValue}&serial_number=${seriaNumber}&client=${client}&current_month=${isCurrentMonth}&columnName=${columnName}&columnNameRaw=${columnNameRaw}&order=${order}&`
         )
 
       if (moreProducts) {
@@ -131,7 +165,7 @@ export function Home() {
       }
 
       const responsePrice = await api.get(
-        `/prices?title=${title}&details=${title}&supplier=${supplier}&startDate=${formattedStartDate.current}&endDate=${formattedEndDate.current}&isBought=${isBought}&isSold=${isSold}&max_value=${maxValue}&min_value=${minValue}&serial_number=${seriaNumber}&client=${client}`
+        `/prices?title=${title}&details=${title}&supplier=${supplier}&startDate=${formattedStartDate.current}&endDate=${formattedEndDate.current}&isBought=${isBought}&isSold=${isSold}&max_value=${maxValue}&min_value=${minValue}&serial_number=${seriaNumber}&client=${client}&current_month=${isCurrentMonth}`
       )
 
       const { final_value, value_bought, value_sold} = responsePrice.data.values
@@ -170,11 +204,8 @@ export function Home() {
       }
 
       setLoading(false)
-      if (isCheck.current) {
-        setIsBought(false)
-        setIsSold(false)
-        isCheck.current = false
-      }
+      setIsBought(false)
+      setIsSold(false)
     }
   }
 
@@ -191,8 +222,8 @@ export function Home() {
     setSupplier('')
     setSerialNumber('')
     setClient('')
-    setStartDate('')
-    setEndDate('')
+    handleSetStartDate('')
+    handleSetEndDate('')
     setIsBought(false)
     setIsSold(false)
   }
@@ -228,8 +259,12 @@ export function Home() {
 
   function handleClean() {
     handleCleanFilters()
-    setCallFetch(!callFetch)
+    handleFetchProducts()
   }
+
+  useEffect(() => {
+    handleDateMsg()
+  }, [isCurrentMonth, filerByDate])
 
   useEffect(() => {
     fetchProducts()
@@ -238,7 +273,7 @@ export function Home() {
   useEffect(() => {
     async function fetchIncome() {
       const response = await api.get(
-        `/prices?title=${title}&details=${title}&supplier=${supplier}&startDate=${formattedStartDate.current}&endDate=${formattedEndDate.current}&isBought=${isBought}&isSold=${isSold}&max_value=${maxValue}&min_value=${minValue}&serial_number=${seriaNumber}&client=${client}`
+        `/prices?title=${title}&details=${title}&supplier=${supplier}&startDate=${formattedStartDate.current}&endDate=${formattedEndDate.current}&isBought=${isBought}&isSold=${isSold}&max_value=${maxValue}&min_value=${minValue}&serial_number=${seriaNumber}&client=${client}&current_month=${isCurrentMonth}`
       )
 
       const { final_value, value_bought, value_sold} = response.data.values
@@ -300,7 +335,25 @@ export function Home() {
         </Income>
         
         <Search>
-          <strong>Filtre os produtos</strong>
+          <strong>Filtros</strong>
+
+          <form className="current-month-checkbox">
+              <input 
+                id="current-month"
+                type="checkbox"
+                checked={isCurrentMonth}
+                onChange={handleIsCurrentMonth}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    handleIsCurrentMonth();
+                  }
+                }}
+              />
+              
+              <label htmlFor="current-month">
+                Produtos do mês atual
+              </label>
+          </form>
 
           <div className="sold-checkbox">
               <input 
@@ -316,7 +369,7 @@ export function Home() {
               />
               
               <label htmlFor="sold">
-                Mostrar apenas produtos que já foram vendidos
+                Produtos que já foram vendidos
               </label>
           </div>
 
@@ -334,7 +387,7 @@ export function Home() {
               />
               
               <label htmlFor="bought">
-                Mostrar apenas produtos que não foram vendidos
+                Produtos que não foram vendidos
               </label>
           </div>
 
@@ -487,13 +540,18 @@ export function Home() {
         <Content>
           <div className="filter-date">
             <h2>Produtos</h2>
+            <Order handleSetOrder={handleSetOrder}/>
             {
               filerByDate && 
                 <span>Exibindo {products.length} de {count} resultado(s), relacionado(s) ao período de {startDate} a {endDate}</span>
             }
             {
-              !filerByDate && 
+              isCurrentMonth && 
                 <span>Exibindo {products.length} de {count} resultado(s), relacionado(s) ao mês atual</span>
+            }
+            {
+              allProductsMsg &&
+                <span>Exibindo todos os produtos</span>
             }
           </div>
 

@@ -56,18 +56,53 @@ export function New() {
     setValueSold(floatValue);
   };
 
+  function checkDates(startDate, endDate) {
+    if (startDate) {
+      if (startDate.slice(-2) === '00' || startDate.slice(-2) > '31' ||
+          startDate.slice(5, 7) === '00' || startDate.slice(5, 7) > '12') {
+        setLoading(false)
+        setAlertMsg('Insira uma data válida.')
+        return false
+      }
+    } else {
+      setLoading(false)
+      setAlertMsg('Insira uma data de compra.')
+      return false
+    }
+
+    if (endDate) {
+      if (endDate.slice(-2) === '00' || endDate.slice(-2) > '31' ||
+          endDate.slice(5, 7) === '00' || endDate.slice(5, 7) > '12') {
+        setLoading(false)
+        setAlertMsg('Insira uma data válida.')
+        return false
+      }
+  
+      if(startDate > endDate) {
+        setLoading(false)
+        setAlertMsg('A data no campo "De:" deve ser menor ou igual que a data no campo "Até:".')
+        return false
+      }
+    }
+
+    return true
+  }
+
   async function handleAddProduct() {
     setLoading(true)
 
     if (title === '' || 
     supplier === '' || 
-    color === '' || 
-    model === '' || 
-    serialNumber === '' || 
     valueBought === '' || 
-    boughtAt === '') {
+    formattedBoughtAt.current === '') {
       setLoading(false)
       return setAlertMsg('Os campos marcados com asterisco (*) são obrigatórios.')
+    }
+
+    const dateOk = checkDates(formattedBoughtAt.current, formattedSoldAt.current)
+
+    if (!dateOk) {
+      return
     }
 
     try {
@@ -148,7 +183,7 @@ export function New() {
           />
 
           <InputText 
-            title="Modelo *"
+            title="Modelo"
             id="model"
             type="text"
             placeholder="Modelo do produto"
@@ -159,7 +194,7 @@ export function New() {
           />
 
           <InputText 
-            title="Cor *"
+            title="Cor"
             id="color"
             type="text"
             placeholder="Cor do produto"
@@ -170,7 +205,7 @@ export function New() {
           />
 
           <InputText 
-            title="Número de série *"
+            title="Número de série"
             id="serial-number"
             type="text"
             placeholder="Número de série do produto"
