@@ -25,14 +25,14 @@ export function Order({ handleSetOrder }) {
     },
     {
       description: 'Data de compra (01/01 - 31/12)',
-      columnName: 'sold_at',
+      columnName: 'bought_at',
       columNameRaw: 'title',
       order: 'asc',
       isActive: false
     },
     {
       description: 'Data de compra (31/12 - 01/01)',
-      columnName: 'sold_at',
+      columnName: 'bought_at',
       columNameRaw: 'title',
       order: 'desc',
       isActive: false
