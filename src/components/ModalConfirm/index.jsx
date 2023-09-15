@@ -1,6 +1,6 @@
 import { Container, Modal } from "./styles"
 import { Button } from '../Button'
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect } from "react"
 import PropTypes from 'prop-types'
 
 export function ModalConfirm({ handleConfirm, content, setContent }) {
@@ -16,6 +16,11 @@ export function ModalConfirm({ handleConfirm, content, setContent }) {
     setContent('')
   }
 
+  const handleCall = () => {
+    handleClose()
+    handleConfirm()
+  }
+
   useEffect(() => {
     if (content !== '') {
       handleToggleModal()
@@ -29,8 +34,14 @@ export function ModalConfirm({ handleConfirm, content, setContent }) {
           <p>{content}</p>
         </div>
         <footer>
-          <Button title="Cancelar" onClick={handleClose} />
-          <Button title="Confirmar" onClick={handleConfirm} />
+          <Button 
+            title="Cancelar" 
+            onClick={handleClose}
+          />
+          <Button 
+            title="Confirmar" 
+            onClick={handleCall}
+          />
         </footer>
       </Modal>
     </Container>

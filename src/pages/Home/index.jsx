@@ -1,4 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
+import { useAuth } from '../../hooks/auth';
+import { useNavigate } from 'react-router-dom';
 
 import { FiSearch } from 'react-icons/fi'
 import { MdOutlineNumbers } from "react-icons/md";
@@ -55,11 +57,13 @@ export function Home() {
   const [isMinus, setIsMinus] = useState(false)
 
   const [products, setProducts] = useState([])
-
+  const navigate = useNavigate()
+  
   const limit = 12
 
   const formattedStartDate = useRef('')
   const formattedEndDate = useRef('')
+  const { signOut } = useAuth();
 
 
   const handleChangeMinValue = (values) => {
@@ -198,6 +202,10 @@ export function Home() {
       }
     } catch (error) {
       if (error.response) {
+        if(error.response.status === 403) {
+          navigate('/')
+          signOut()
+        }
         setAlertMsg(error.response.data.message)
       } else {
         console.error(error)

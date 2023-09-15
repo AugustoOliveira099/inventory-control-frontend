@@ -45,4 +45,25 @@ export const Form = styled.form`
     font-weight: 500;
     margin-bottom: 4rem;
   }
+
+  > div {
+    p {
+      margin-top: 0.7rem;
+    }
+  }
+
+  > .container-checkbox {
+    width: 100%;
+    margin-block: 2rem;
+    display: flex;
+
+    align-items: center;
+    gap: 1rem;
+  }
+
+  > .buttons {
+    width: 100%;
+    display: flex;
+    gap: 1.5rem;
+  }
 `

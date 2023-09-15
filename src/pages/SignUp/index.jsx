@@ -1,16 +1,19 @@
-import { useState } from "react";
+import { useState } from "react"
+import { useNavigate } from "react-router-dom"
+import { useAuth } from "../../hooks/auth"
+
 import { FiMail, FiLock } from 'react-icons/fi'
-import { Link } from 'react-router-dom'
 
 import { api } from '../../services/api'
 
+import { Back } from '../../components/Back'
 import { Button } from '../../components/Button'
 import { Input } from '../../components/Input'
 import { ModalAlert } from '../../components/ModalAlert'
+import { Header } from '../../components/HeaderAdmin'
+import { Footer } from '../../components/Footer'
 
-import logo from '../../assets/logo.svg'
-
-import { Container, Form, Logo } from './styles'
+import { Container, Form } from './styles'
 
 export function SignUp() {
   const [name, setName] = useState('')
@@ -21,6 +24,10 @@ export function SignUp() {
   const [alertMsg, setAlertMsg] = useState('')
   const [back, setBack] = useState(false)
 
+  const { signOut } = useAuth()
+  const navigate = useNavigate()
+  
+  
   function handleSignUp() {
     if (!name || !email || !firstPassword || !secondPassword) {
       return setAlertMsg("Preencha todos os campos.")
@@ -45,6 +52,10 @@ export function SignUp() {
     })
     .catch( (error) =>{
       if (error.response) {
+        if(error.response.status === 403) {
+          navigate('/')
+          signOut()
+        }
         setAlertMsg(error.response.data.message)
       } else {
         setAlertMsg('Não foi possível cadastrar este usuário. Por favor, tente novamente.')
@@ -55,74 +66,73 @@ export function SignUp() {
 
   return (
     <Container>
-      <Logo>
-        <img src={logo} alt="Logo da Mac Storee" />
-        <h1>mac storee</h1>
-      </Logo>
+      <Header />
 
-      <Form>
-        <h2>Crie sua conta</h2>
+      <div className="register">
+        <Back />
+        
+        <Form>
+          <h2>Criar usuário</h2>
 
-        <Input 
-          placeholder="Nome"
-          type="text"
-          icon={FiMail}
-          isOnLogin
-          onChange={e => setName(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              handleSignUp()
-            }
-          }}
-        />
+          <Input 
+            placeholder="Nome"
+            type="text"
+            icon={FiMail}
+            isOnLogin
+            onChange={e => setName(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handleSignUp()
+              }
+            }}
+          />
 
-        <Input 
-          placeholder="E-mail"
-          type="email"
-          icon={FiMail}
-          isOnLogin
-          onChange={e => setEmail(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              handleSignUp()
-            }
-          }}
-        />
+          <Input 
+            placeholder="E-mail"
+            type="email"
+            icon={FiMail}
+            isOnLogin
+            onChange={e => setEmail(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handleSignUp()
+              }
+            }}
+          />
 
-        <Input 
-          placeholder="Senha (no mínimo 6 caracteres)"
-          type="password"
-          icon={FiLock}
-          isOnLogin
-          value={firstPassword}
-          onChange={e => setFirstPassword(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              handleSignUp()
-            }
-          }}
-        />
+          <Input 
+            placeholder="Senha (no mínimo 6 caracteres)"
+            type="password"
+            icon={FiLock}
+            isOnLogin
+            value={firstPassword}
+            onChange={e => setFirstPassword(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handleSignUp()
+              }
+            }}
+          />
 
-        <Input 
-          placeholder="Confirme a senha"
-          type="password"
-          icon={FiLock}
-          isOnLogin
-          value={secondPassword}
-          onChange={e => setSecondPassword(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              handleSignUp()
-            }
-          }}
-        />
+          <Input 
+            placeholder="Confirme a senha"
+            type="password"
+            icon={FiLock}
+            isOnLogin
+            value={secondPassword}
+            onChange={e => setSecondPassword(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handleSignUp()
+              }
+            }}
+          />
 
-        <Button title="Entrar" onClick={handleSignUp} />
+          <Button title="Confirmar" onClick={handleSignUp} />
+        </Form>
+      </div>
 
-        <Link to="/">
-          Já tenho uma conta
-        </Link>
-      </Form>
+      <Footer />
 
       <ModalAlert 
         setContent={setAlertMsg} 

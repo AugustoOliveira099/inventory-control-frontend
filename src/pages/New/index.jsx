@@ -1,4 +1,6 @@
 import { useRef, useState } from "react"
+import { useAuth } from '../../hooks/auth';
+import { useNavigate } from "react-router-dom";
 
 import { AiFillPlusCircle, AiTwotoneCalendar } from "react-icons/ai";
 import { MdTitle } from "react-icons/md";
@@ -28,6 +30,8 @@ import { NumericFormat, PatternFormat } from "react-number-format";
 export function New() {
   const formattedBoughtAt = useRef('')
   const formattedSoldAt = useRef('')
+  const { signOut } = useAuth()
+  const navigate = useNavigate()
 
   const [title, setTitle] = useState('')
   const [details, setDetails] = useState('')
@@ -45,6 +49,7 @@ export function New() {
   const [back, setBack] = useState(false)
 
   const [loading, setLoading] = useState(false)
+
 
   const handleValueChangeBought = (values) => {
     const { floatValue } = values;
@@ -126,6 +131,10 @@ export function New() {
       setLoading(false)
 
       if(error.response) {
+        if(error.response.status === 403) {
+          navigate('/')
+          signOut()
+        }
         setAlertMsg(error.response.data.message)
       } else {
         console.error(error)

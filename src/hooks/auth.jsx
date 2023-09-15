@@ -16,6 +16,7 @@ function AuthProvider({ children }) {
       localStorage.setItem('@macstoree:user', JSON.stringify(user));
       localStorage.setItem('@macstoree:token', token);
 
+      console.log("tá chegando aqui")
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`
       setData({ user, token })
     } catch (error) {

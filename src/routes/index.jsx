@@ -3,13 +3,36 @@ import { useAuth } from '../hooks/auth'
 
 import { AppRoutes } from './app.routes'
 import { AuthRoutes } from './auth.routes'
+import { AdminRoutes } from './admin.routes'
+import { ModalAlert } from '../components/ModalAlert'
+
+import { useEffect, useState } from 'react'
 
 export function Routes() {
-  const { user } = useAuth()
+  const { user, signOut } = useAuth()
+  const [ Element, setElement] = useState()
+  const [alertMsg, setAlertMsg] = useState('')
+
+  useEffect(() => {
+    if (user) {
+      if (user.is_admin) {
+        setElement(<AdminRoutes />)
+      } else if (user.is_active) {
+        setElement(<AppRoutes />)
+      } else {
+        signOut()
+      }
+    }
+  }, [user])
 
   return (
     <BrowserRouter >
-      { user ? <AppRoutes /> : <AuthRoutes /> }
+      {user ? Element : <AuthRoutes />}
+
+      <ModalAlert 
+        setContent={setAlertMsg} 
+        content={alertMsg}
+      />
     </BrowserRouter>
   )
 }

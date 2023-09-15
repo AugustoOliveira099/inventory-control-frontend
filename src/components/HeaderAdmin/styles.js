@@ -76,7 +76,7 @@ export const Profile = styled.div`
   }
 `
 
-export const NewProduct = styled(Link)`
+export const NewUser = styled(Link)`
   border: none;
   border-radius: 1rem;
 
@@ -100,7 +100,12 @@ export const NewProduct = styled(Link)`
 
   > svg {
     font-size: 2rem;
-    fill: ${({ theme }) => theme.COLORS.BACKGROUND_900};
+    
+    path,
+    circle,
+    line {
+      color: ${({ theme }) => theme.COLORS.BACKGROUND_900};
+    }
   }
 `
 

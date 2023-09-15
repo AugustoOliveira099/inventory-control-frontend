@@ -35,7 +35,7 @@ export const Income = styled.div`
 
   width: 100%;
   height: 10rem;
-  padding-right: 7rem;
+  padding-right: 4rem;
 
   display: flex;
   align-items: flex-end;
@@ -103,7 +103,7 @@ export const Income = styled.div`
 export const Search = styled.div`
   grid-area: search;
 
-  padding: 3rem 1rem 3rem 1rem;
+  padding: 3rem 1rem 3rem 0;
   margin-left: 4rem;
 
   display: flex;
@@ -172,7 +172,7 @@ export const Search = styled.div`
 export const Content = styled.div`
   grid-area: content;
 
-  padding: 0 7rem 2rem 4rem;
+  padding: 0 4rem 2rem 4rem;
   width: 100%;
 
   > .filter-date {

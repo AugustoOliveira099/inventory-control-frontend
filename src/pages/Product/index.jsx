@@ -10,6 +10,7 @@ import { FaApple } from 'react-icons/fa'
 
 import { useEffect, useState, useRef } from "react"
 import { useParams } from 'react-router-dom'
+import { useAuth } from '../../hooks/auth';
 
 import { Header } from '../../components/Header'
 import { Textarea } from '../../components/Textarea'
@@ -31,6 +32,7 @@ import { NumericFormat, PatternFormat } from "react-number-format";
 export function Product() {
   const formattedBoughtAt = useRef('')
   const formattedSoldAt = useRef('')
+  const { signOut } = useAuth();
 
   const [title, setTitle] = useState('')
   const [details, setDetails] = useState('')
@@ -44,16 +46,16 @@ export function Product() {
   const [soldAt, setSoldAt] = useState('')
   const [boughtAt, setBoughtAt] = useState('')
 
+  const [confirmMsg, setConfirmMsg] = useState('')
   const [alertMsg, setAlertMsg] = useState('')
   const [back, setBack] = useState(false)
-
-  const [confirmMsg, setConfirmMsg] = useState('')
 
   const [loading, setLoading] = useState(false)
 
   const params = useParams()
   const navigate = useNavigate()
 
+  
   const handleValueChangeBought = (values) => {
     const { floatValue } = values;
     setValueBought(floatValue);
@@ -243,6 +245,10 @@ export function Product() {
         handleSetSoldAt(soldAtFormated)
       } catch (error) {
         if(error.response) {
+          if(error.response.status === 403) {
+            navigate('/')
+            signOut()
+          }
           setAlertMsg(error.response.data.message)
           setBack(true)
         } else {

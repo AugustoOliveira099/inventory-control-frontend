@@ -10,7 +10,7 @@ export const Container = styled.footer`
   align-items: center;
   justify-content: center;
 
-  padding: 0 17rem;
+  padding: 0 4rem;
 
   background-color: ${({ theme }) => theme.COLORS.BACKGROUND_900};
 
@@ -55,7 +55,12 @@ export const Reference = styled.div`
 
     align-items: center;
     gap: 0.5rem;
-    
-    color: ${({ theme }) => theme.COLORS.WHITE_300};
+
+    color: ${({ theme }) => theme.COLORS.GRAY_100};
+    // color: ${({ theme }) => theme.COLORS.WHITE_300};
+  }
+
+  > span {
+    color: ${({ theme }) => theme.COLORS.GRAY_100};
   }
 `
