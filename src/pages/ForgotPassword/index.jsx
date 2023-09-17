@@ -60,6 +60,7 @@ export function ForgotPassword() {
         <h2>Esquici minha senha</h2>
 
         <InputText
+          id="password"
           placeholder="E-mail"
           title="Digite seu email"
           type="email"
