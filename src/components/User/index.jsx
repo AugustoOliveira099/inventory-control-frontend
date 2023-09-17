@@ -21,7 +21,7 @@ export function User({ user, index, isLast=false }) {
     }
 
     setIsOdd(index%2 === 1)
-  }, [])
+  }, [index])
 
   return (
     <Container

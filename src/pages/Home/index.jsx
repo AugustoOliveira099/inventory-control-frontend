@@ -345,7 +345,7 @@ export function Home() {
         <Search>
           <strong>Filtros</strong>
 
-          <form className="current-month-checkbox">
+          <div className="current-month-checkbox">
               <input 
                 id="current-month"
                 type="checkbox"
@@ -361,7 +361,7 @@ export function Home() {
               <label htmlFor="current-month">
                 Produtos do mês atual
               </label>
-          </form>
+          </div>
 
           <div className="sold-checkbox">
               <input 

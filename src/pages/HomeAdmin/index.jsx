@@ -6,6 +6,9 @@ import { Header } from '../../components/HeaderAdmin'
 import { User } from '../../components/User'
 import { Footer } from '../../components/Footer'
 import { ModalAlert } from '../../components/ModalAlert'
+import { Input } from '../../components/Input'
+
+import { FiSearch } from 'react-icons/fi'
 
 import { api } from '../../services/api'
 
@@ -20,26 +23,26 @@ export function HomeAdmin() {
   const { signOut } = useAuth()
   const navigate = useNavigate()
 
-  useEffect(() => {
-    async function fetchUsers() {
-      try {
-        const response = await api.get('/users')
-        setUsers(response.data)
-      } catch (error) {
-        if(error.response) {
-          if(error.response.status === 403) {
-            navigate('/')
-            signOut()
-          }
-          setAlertMsg(error.response.data.message)
-        } else {
-          console.error(error)
-          setAlertMsg('Não foi possível obter a lista de usuários.')
+  async function handleFetchUsers() {
+    try {
+      const response = await api.get(`/users?name=${search}&email=${search}`)
+      setUsers(response.data)
+    } catch (error) {
+      if(error.response) {
+        if(error.response.status === 403) {
+          navigate('/')
+          signOut()
         }
+        setAlertMsg(error.response.data.message)
+      } else {
+        console.error(error)
+        setAlertMsg('Não foi possível obter a lista de usuários.')
       }
     }
+  }
 
-    fetchUsers()
+  useEffect(() => {
+    handleFetchUsers()
   }, [])
 
   return (
@@ -47,6 +50,21 @@ export function HomeAdmin() {
       <Header />
 
       <Main>
+        <div className="search">
+          <Input
+            type="text"
+            placeholder="Título ou e-mail"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handleFetchUsers();
+              }
+            }}
+            icon={FiSearch}
+          />
+        </div>
+
         <div className="table-header">
           <span>Nome</span>
           <span>E-mail</span>

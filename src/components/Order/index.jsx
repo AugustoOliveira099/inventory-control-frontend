@@ -76,7 +76,6 @@ export function Order({ handleSetOrder }) {
 
     for (let i = 0; i <= options.length-1; i++) {
       if (i !== index) {
-        console.log(updatedOptions[i])
         updatedOptions[i].isActive = false
       }
     }

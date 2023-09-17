@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react'
 
 export function Routes() {
   const { user, signOut } = useAuth()
-  const [ Element, setElement] = useState()
+  const [ Element, setElement] = useState(null)
   const [alertMsg, setAlertMsg] = useState('')
 
   useEffect(() => {
@@ -21,7 +21,10 @@ export function Routes() {
         setElement(<AppRoutes />)
       } else {
         signOut()
+        setElement(null)
       }
+    } else {
+      setElement(null)
     }
   }, [user])
 

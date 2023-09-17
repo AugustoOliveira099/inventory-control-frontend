@@ -50,7 +50,6 @@ export function ChangePassword() {
     })
     .catch( (error) => {
       if (error.response) {
-        console.log("eireoignr")
         setAlertMsg(error.response.data.message)
       } else {
         setAlertMsg('Erro ao redefinir a sua senha. Tente novamente, por favor.')
@@ -65,9 +64,7 @@ export function ChangePassword() {
       setLoading(true)
 
       try {
-        const user = await api.get(`/users/password/${params.hash}`)
-
-        console.log(user)
+        await api.get(`/users/password/${params.hash}`)
       } catch (error) {
         if (error.response) {
           setAlertMsg(error.response.data.message)

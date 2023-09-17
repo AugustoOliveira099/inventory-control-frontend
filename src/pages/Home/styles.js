@@ -100,7 +100,7 @@ export const Income = styled.div`
   }
 `
 
-export const Search = styled.div`
+export const Search = styled.form`
   grid-area: search;
 
   padding: 3rem 1rem 3rem 0;

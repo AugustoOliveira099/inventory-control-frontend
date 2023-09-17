@@ -114,7 +114,6 @@ export function Product() {
       if (endDate.slice(-2) === '00' || endDate.slice(-2) > '31' ||
           endDate.slice(5, 7) === '00' || endDate.slice(5, 7) > '12') {
         setLoading(false)
-        console.log(endDate)
         setAlertMsg('Insira uma data válida.')
         return false
       }

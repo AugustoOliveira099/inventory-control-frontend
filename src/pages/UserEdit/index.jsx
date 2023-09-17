@@ -103,8 +103,6 @@ export function UserEdit() {
         setIsAdmin(user.is_admin)
         setStaticIsAdmin(user.is_admin)
 
-        console.log(user.is_admin)
-
         const [date,] = user.paid_at.split(' ')
         setPaidAt(date)
 
