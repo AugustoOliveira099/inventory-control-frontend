@@ -359,7 +359,7 @@ export function Home() {
               />
               
               <label htmlFor="current-month">
-                Produtos do mês atual
+                Mês atual
               </label>
           </div>
 
@@ -377,7 +377,7 @@ export function Home() {
               />
               
               <label htmlFor="sold">
-                Produtos que já foram vendidos
+                Vendidos
               </label>
           </div>
 
@@ -395,7 +395,7 @@ export function Home() {
               />
               
               <label htmlFor="bought">
-                Produtos que não foram vendidos
+                Em estoque
               </label>
           </div>
 
